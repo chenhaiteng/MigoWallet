@@ -9,6 +9,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.IdRes
+import androidx.annotation.StringRes
 import androidx.recyclerview.widget.RecyclerView
 import com.chenhaiteng.migowallet.R
 import kotlinx.android.synthetic.main.group_list_header.view.*
@@ -19,6 +20,7 @@ data class GroupListItem(
     var name: String = "",
     var description: String? = null,
     @IdRes var icon: Int? = null,
+    @StringRes var actionTitle: Int? = null,
     var action: ((Pair<Int, Int>) -> Unit)? = null)
 
 interface GroupListDataSource {
@@ -134,11 +136,19 @@ class GroupListAdapter(
             is GroupListAdapter.ItemHolder -> {
                 name.text = item.name
                 description.text = item.description ?: ""
+
                 item.icon?.let {
                     icon.visibility = View.VISIBLE
                 } ?: run {
                     icon.visibility = View.GONE
                 }
+
+                item.actionTitle?.let {
+                    actionButton.setText(it)
+                } ?: run {
+                    actionButton.text = "Action"
+                }
+
                 actionButton.setOnClickListener {
                     item.action?.invoke(item.index)
                 }
