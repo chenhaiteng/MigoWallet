@@ -5,14 +5,21 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.IdRes
 import androidx.recyclerview.widget.RecyclerView
 import com.chenhaiteng.migowallet.R
 import kotlinx.android.synthetic.main.group_list_header.view.*
 import kotlinx.android.synthetic.main.group_list_item.view.*
 
-class GroupListItem(val index : Pair<Int, Int>, var name: String = "")
+data class GroupListItem(
+    val index: Pair<Int, Int>,
+    var name: String = "",
+    var description: String? = null,
+    @IdRes var icon: Int? = null,
+    var action: ((Pair<Int, Int>) -> Unit)? = null)
 
 interface GroupListDataSource {
     fun numberOfGroups(groupList: GroupListAdapter): Int
@@ -74,7 +81,7 @@ class GroupListAdapter(
     }
 
 
-    fun select(item: Int, atGroup: Int) : Boolean {
+    private fun select(item: Int, atGroup: Int) : Boolean {
         val target = Pair(atGroup, item)
         var success = false
         when(selectionType) {
@@ -125,8 +132,17 @@ class GroupListAdapter(
     private fun RecyclerView.ViewHolder.bind(item: GroupListItem) {
         when(this) {
             is GroupListAdapter.ItemHolder -> {
-                this.mIdView.text = item.name
-                this.mCheckMark.visibility = if(mSelections.contains(item.index)) View.VISIBLE else View.INVISIBLE
+                name.text = item.name
+                description.text = item.description ?: ""
+                item.icon?.let {
+                    icon.visibility = View.VISIBLE
+                } ?: run {
+                    icon.visibility = View.GONE
+                }
+                actionButton.setOnClickListener {
+                    item.action?.invoke(item.index)
+                }
+//                this.checkMark.visibility = if(mSelections.contains(item.index)) View.VISIBLE else View.INVISIBLE
             }
             is GroupListAdapter.GroupHolder -> {
                 this.mHeader.text = item.name
@@ -161,10 +177,13 @@ class GroupListAdapter(
     }
 
     inner class ItemHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val mIdView: TextView = itemView.item_name
-        val mCheckMark: ImageView = itemView.check_mark
+        val name: TextView = itemView.item_name
+        val description: TextView = itemView.item_description
+        val icon: ImageView = itemView.item_icon
+        val actionButton: Button = itemView.action
+        val checkMark: ImageView = itemView.check_mark
         override fun toString(): String {
-            return super.toString() + " '${mIdView.text}'"
+            return super.toString() + " '${name.text}'"
         }
     }
 

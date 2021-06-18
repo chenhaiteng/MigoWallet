@@ -3,36 +3,72 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#171717"
+    android:background="@color/white"
     android:orientation="vertical">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="44dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/item_margin"
-        android:layout_marginEnd="13dp"
-        android:orientation="horizontal">
-
+        android:layout_marginEnd="@dimen/item_margin"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/item_margin"
+        android:layout_marginBottom="@dimen/item_margin">
+        <ImageView
+            android:id="@+id/item_icon"
+            android:layout_width="40dp"
+            android:layout_height="0dp"
+            android:gravity="start|center_vertical"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="W, 1:1"/>
         <TextView
             android:id="@+id/item_name"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="start|center_vertical"
             android:letterSpacing="-0.02"
             android:lineSpacingExtra="5sp"
             android:text="placeholder"
             android:textAppearance="?attr/textAppearanceListItem"
-            android:textColor="#d5d5d5"
-            android:textSize="17sp" />
-
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/item_icon"
+            app:layout_constraintTop_toTopOf="parent"/>
+        <TextView
+            android:id="@+id/item_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="placeholder"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:layout_constraintTop_toBottomOf="@id/item_name"
+            app:layout_constraintStart_toStartOf="@id/item_name"
+            android:layout_marginTop="5dp"/>
+        <Button
+            android:id="@+id/action"
+            android:layout_width="wrap_content"
+            android:layout_height="44dp"
+            android:text="action_placeholder"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintWidth_max="80dp"/>
         <ImageView
             android:id="@+id/check_mark"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|end"
-            android:visibility="invisible"/>
-    </LinearLayout>
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <View
         android:layout_width="match_parent"
