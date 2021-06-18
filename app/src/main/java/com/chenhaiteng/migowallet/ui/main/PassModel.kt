@@ -21,6 +21,7 @@ interface Pass {
     var duration: Duration
     var price: Double
     fun isExpired() : Boolean
+    fun copyTo() : Pass
 }
 
 fun Pass.activate() {
@@ -31,6 +32,10 @@ fun Pass.activate() {
             }
         }
     }
+}
+
+fun Pass.isActivated() : Boolean {
+    return activeDate != null
 }
 
 fun Pass.title(): String = when(type) {
@@ -54,7 +59,7 @@ data class DayPass(override var duration: Duration, override var price: Double =
 
     override var expireDate: LocalDateTime? = null
     override fun isExpired() : Boolean = isExpired(LocalDateTime.now())
-
+    override fun copyTo(): Pass = copy()
     // To make DayPass testable
     fun isExpired(atDate: LocalDateTime) : Boolean {
         return expireDate?.let {
@@ -80,6 +85,7 @@ data class HourPass(override var duration: Duration, override var price: Double 
         }
     override var expireDate: LocalDateTime? = null
     override fun isExpired() : Boolean = isExpired(LocalDateTime.now())
+    override fun copyTo(): Pass = copy()
 
     // To make DayPass testable
     fun isExpired(atDate: LocalDateTime) : Boolean {

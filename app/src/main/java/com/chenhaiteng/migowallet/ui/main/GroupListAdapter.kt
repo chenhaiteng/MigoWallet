@@ -149,8 +149,13 @@ class GroupListAdapter(
                     actionButton.text = "Action"
                 }
 
-                actionButton.setOnClickListener {
-                    item.action?.invoke(item.index)
+                item.action?.let {
+                    actionButton.visibility = View.VISIBLE
+                    actionButton.setOnClickListener { _ ->
+                        item.action?.invoke(item.index)
+                    }
+                } ?: run {
+                    actionButton.visibility = View.GONE
                 }
 //                this.checkMark.visibility = if(mSelections.contains(item.index)) View.VISIBLE else View.INVISIBLE
             }

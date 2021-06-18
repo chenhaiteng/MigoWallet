@@ -6,8 +6,7 @@ import java.time.Duration
 // Mock Model for PassShop
 class MockShop : ViewModel() {
     private var items = listOf<Pass>()
-    private fun days(num: Long) = Duration.ofDays(num)
-    private fun hours(num: Long)  = Duration.ofHours(num)
+
     fun fetchAvailablePasses() {
         items = listOf(
             DayPass(1, 2.0),

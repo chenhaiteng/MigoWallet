@@ -9,10 +9,12 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.chenhaiteng.migowallet.R
 import com.chenhaiteng.migowallet.ui.main.placeholder.MockShop
+import com.chenhaiteng.migowallet.ui.main.placeholder.MyPassMockModel
 import kotlinx.android.synthetic.main.shop_fragment.view.*
 
 class ShopFragment : Fragment() {
     private val shop: MockShop by activityViewModels()
+    private val myPass: MyPassMockModel by activityViewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
@@ -49,11 +51,11 @@ class ShopFragment : Fragment() {
                     1 -> shop.availableHourPass()[pathIndex.second]
                     else -> null
                 }
-                return item?.let {
-                    val listItem = GroupListItem(pathIndex, "${it.title()}") {
-                        // TODO: add pass to cart.
+                return item?.let { pass ->
+                    val listItem = GroupListItem(pathIndex, "${pass.title()}") {
+                        myPass.addPass(pass)
                     }
-                    listItem.description = "price \$${it.price}"
+                    listItem.description = "price \$${pass.price}"
                     listItem.actionTitle = R.string.buy_button
                     listItem
                 } ?: run {
