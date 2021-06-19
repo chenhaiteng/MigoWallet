@@ -1,9 +1,10 @@
-package com.chenhaiteng.migowallet.ui.main
+package com.chenhaiteng.migowallet.utility
 
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.wifi.WifiManager
+import com.chenhaiteng.migowallet.ui.main.createSingleton
 
 class NetworkInfo private constructor(context: Context) {
 

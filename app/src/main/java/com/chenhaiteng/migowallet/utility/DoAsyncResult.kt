@@ -1,4 +1,4 @@
-package com.chenhaiteng.migowallet.ui.main
+package com.chenhaiteng.migowallet.utility
 
 import android.os.AsyncTask
 import kotlinx.coroutines.*

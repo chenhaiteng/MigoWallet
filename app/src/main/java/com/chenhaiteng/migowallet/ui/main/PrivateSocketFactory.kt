@@ -3,11 +3,10 @@
 // https://stackoverflow.com/questions/30118534/global-state-and-local-address-in-okhttp
 package com.chenhaiteng.migowallet.ui.main
 
-import android.util.Log
+import com.chenhaiteng.migowallet.utility.NetworkInfo
 import java.math.BigInteger
 import java.net.*
 import javax.net.SocketFactory
-import kotlin.experimental.and
 
 class PrivateSocketFactory(private val localAddress:InetAddress) : SocketFactory() {
 
