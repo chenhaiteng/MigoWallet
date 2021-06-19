@@ -2,7 +2,6 @@ package com.chenhaiteng.migowallet.ui.main
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +16,8 @@ import kotlinx.android.synthetic.main.main_fragment.view.*
 import okhttp3.OkHttpClient
 import java.lang.Exception
 import java.net.URL
+import java.util.concurrent.TimeUnit
+import javax.net.SocketFactory
 
 class MainFragment : Fragment(), LifecycleObserver {
     companion object {
@@ -50,13 +51,12 @@ class MainFragment : Fragment(), LifecycleObserver {
                 }
                 else -> return@setOnNavigationItemSelectedListener false
             }
-            true
         }
 
         return root
     }
 
-    fun showMigoCodeTestResult(result: String) {
+    private fun showMigoCodeTestResult(result: String) {
         activity?.runOnUiThread {
             view?.fetch_status?.let { view ->
                 view.text = result
@@ -64,7 +64,7 @@ class MainFragment : Fragment(), LifecycleObserver {
         }
     }
 
-    fun fetchMigoCodeTest() {
+    private fun fetchMigoCodeTest() {
         val netInfo = NetworkInfo.standard(context)
         if (netInfo.isConnected) {
             if (netInfo.isWifi && netInfo.isCellular) {
@@ -76,26 +76,63 @@ class MainFragment : Fragment(), LifecycleObserver {
             showMigoCodeTestResult("No network!")
         }
     }
-    fun migoCodeTestFetchPrivate() {
 
-    }
-
-    fun migoCodeTestFetchPublic() {
+    private fun migoCodeTestFetchPrivate() {
+        //Try connect to Private
         doAsync {
-            val url = URL(getString(R.string.code_test_url))
-            val client = OkHttpClient()
-            val request = okhttp3.Request.Builder().url(url).get().build()
+            val url = URL(getString(R.string.code_test_url_private))
+            val client = OkHttpClient.Builder()
+                .socketFactory(PrivateSocketFactory.wifi() ?: SocketFactory.getDefault())
+                .readTimeout(2, TimeUnit.SECONDS)
+                .build()
+            val request = okhttp3.Request.Builder()
+                .url(url)
+                .get()
+                .build()
             try {
                 val response = client.newCall(request).execute()
                 when (response.code()) {
                     200 -> {
                         response.body()?.string()?.let {
-                            showMigoCodeTestResult("public: $it")
+                            showMigoCodeTestResult("private: $it")
                         }
                     }
                     else -> {
                         response.body()?.string()?.let {
-                            showMigoCodeTestResult("public: $it")
+                            showMigoCodeTestResult("private: $it")
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                showMigoCodeTestResult(e.message ?: "$e")
+            }
+        }
+    }
+
+    fun migoCodeTestFetchPublic() {
+        doAsync {
+            val url = URL(getString(R.string.code_test_url))
+            val client = OkHttpClient.Builder()
+                .build()
+            val request = okhttp3.Request.Builder()
+                .url(url)
+                .get()
+                .build()
+            try {
+                val response = client.newCall(request).execute()
+                when (response.code()) {
+                    200 -> {
+                        activity?.runOnUiThread {
+                            response.body()?.string()?.let {
+                                showMigoCodeTestResult("public: $it")
+                            }
+                        }
+                    }
+                    else -> {
+                        activity?.runOnUiThread {
+                            response.body()?.string()?.let {
+                                showMigoCodeTestResult("public: $it")
+                            }
                         }
                     }
                 }
@@ -120,10 +157,5 @@ class MainFragment : Fragment(), LifecycleObserver {
         super.onViewCreated(view, savedInstanceState)
         fetchMigoCodeTest()
     }
-
-//    override fun onActivityCreated(savedInstanceState: Bundle?) {
-//        super.onActivityCreated(savedInstanceState)
-//        // TODO: Use the ViewModel
-//    }
-
+    
 }
