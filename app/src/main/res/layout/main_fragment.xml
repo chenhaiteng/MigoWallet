@@ -15,8 +15,17 @@
         android:textAlignment="center"
         android:text="Fetch..."
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/testPass"
         app:layout_constraintTop_toTopOf="parent"/>
+    <Button
+        android:id="@+id/testPass"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:text="Test Pass"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/fetch_status"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/fetch_status"/>
     <FrameLayout
         android:id="@+id/container"
         android:layout_width="0dp"

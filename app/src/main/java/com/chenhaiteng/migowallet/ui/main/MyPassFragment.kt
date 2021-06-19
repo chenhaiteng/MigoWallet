@@ -1,6 +1,7 @@
 package com.chenhaiteng.migowallet.ui.main
 
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.chenhaiteng.migowallet.R
 import com.chenhaiteng.migowallet.ui.main.placeholder.MyPassMockModel
 import kotlinx.android.synthetic.main.my_pass_fragment.view.*
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 class MyPassFragment : Fragment() {
     private val myPass: MyPassMockModel by activityViewModels()
@@ -48,20 +51,26 @@ class MyPassFragment : Fragment() {
             }
             return item?.let { pass ->
 
-                val activate = { _: Pair<Int, Int> ->
+                val activate: ((Pair<Int,Int>) -> Unit) = { _: Pair<Int, Int> ->
                     pass.activate()
                     adapter.notifyDataSetChanged()
+                    val futureInSecs = pass.expireDate!!.toEpochSecond(ZoneOffset.UTC) - LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
+                    newCountDown(futureInSecs*1000).start()
                 }
 
                 val showDetail = { _: Pair<Int, Int> ->
-
+                    PassDetailFragment.newInstance(pass).show(childFragmentManager, "PassDetail")
                 }
 
-                val action: ((Pair<Int,Int>) -> Unit)? = if (pass.isActivated()) {
-                    if (pass.isExpired()) {
-                        null
-                    } else showDetail
-                } else activate
+                val action: ((Pair<Int,Int>) -> Unit)? = if (pass.isExpired()) {
+                    null
+                } else {
+                    if(pass.isActivated()) {
+                        showDetail
+                    } else {
+                        activate
+                    }
+                }
 
                 val listItem = GroupListItem(pathIndex, "${pass.title()}", action = action)
                 listItem.description = "price \$${pass.price}"
@@ -81,9 +90,32 @@ class MyPassFragment : Fragment() {
                 else -> getPassItem(atIndex)
             }
         }
+
+        private fun newCountDown(futureInMillis: Long) : CountDownTimer {
+            return object: CountDownTimer(futureInMillis, 1000) {
+                override fun onTick(millisUntilFinished: Long) {
+                }
+                override fun onFinish() {
+                    activity?.runOnUiThread {
+                        adapter.notifyDataSetChanged()
+                    }
+                }
+            }
+        }
     }
 
-    private val adapter = GroupListAdapter(MyPassDatasource(), null)
+    private val adapter = GroupListAdapter(MyPassDatasource(), object: GroupListDelegate {
+        override fun onClickItem(groupList: GroupListAdapter, at: Pair<Int, Int>?) {
+            val item = when(at?.first) {
+                0 -> myPass.allDayPass()[at.second]
+                1 -> myPass.allHourPass()[at.second]
+                else -> null
+            }
+            item?.let { pass ->
+                PassDetailFragment.newInstance(pass).show(childFragmentManager, "PassDetail")
+            }
+        }
+    })
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {

@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.chenhaiteng.migowallet.ui.main.Pass
 import com.chenhaiteng.migowallet.ui.main.PassType
+import java.time.LocalDateTime
 
 class MyPassMockModel : ViewModel() {
 
@@ -32,7 +33,10 @@ class MyPassMockModel : ViewModel() {
     fun allHourPass() = _hourPasses
 
     fun addPass(pass: Pass) {
-        items.add(pass.copyTo())
+        val copy = pass.copyTo().apply {
+            insertDate = LocalDateTime.now()
+        }
+        items.add(copy)
         livedata.value = items
     }
 }

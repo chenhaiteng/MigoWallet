@@ -12,12 +12,15 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import com.chenhaiteng.migowallet.R
 import com.chenhaiteng.migowallet.ui.main.placeholder.MockShop
+import com.chenhaiteng.migowallet.ui.main.placeholder.MyPassMockModel
 import com.chenhaiteng.migowallet.utility.NetworkInfo
 import com.chenhaiteng.migowallet.utility.doAsync
+import kotlinx.android.synthetic.main.group_list_item.view.*
 import kotlinx.android.synthetic.main.main_fragment.view.*
 import okhttp3.OkHttpClient
 import java.lang.Exception
 import java.net.URL
+import java.time.Duration
 import java.util.concurrent.TimeUnit
 import javax.net.SocketFactory
 
@@ -26,6 +29,7 @@ class MainFragment : Fragment(), LifecycleObserver {
         fun newInstance() = MainFragment()
     }
     private val shop: MockShop by activityViewModels()
+    private val myPass: MyPassMockModel by activityViewModels()
 
     private val shopFragment: ShopFragment by lazy { ShopFragment.newShop() }
     private val myPassFragment: MyPassFragment by lazy { MyPassFragment.newMyPasses() }
@@ -35,6 +39,10 @@ class MainFragment : Fragment(), LifecycleObserver {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
         val root = inflater.inflate(R.layout.main_fragment, container, false)
+        root.testPass.setOnClickListener {
+            val testPass = HourPass(Duration.ofSeconds(5))
+            myPass.addPass(testPass)
+        }
         childFragmentManager.beginTransaction().add(R.id.container, shopFragment).commitNowAllowingStateLoss()
         childFragmentManager.beginTransaction().add(R.id.container, myPassFragment).commitNowAllowingStateLoss()
         childFragmentManager.beginTransaction().hide(myPassFragment).show(shopFragment).commitNowAllowingStateLoss()
