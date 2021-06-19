@@ -13,6 +13,7 @@ import androidx.lifecycle.OnLifecycleEvent
 import com.chenhaiteng.migowallet.R
 import com.chenhaiteng.migowallet.ui.main.placeholder.MockShop
 import com.chenhaiteng.migowallet.utility.NetworkInfo
+import com.chenhaiteng.migowallet.utility.doAsync
 import kotlinx.android.synthetic.main.main_fragment.view.*
 import okhttp3.OkHttpClient
 import java.lang.Exception

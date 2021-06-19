@@ -20,6 +20,8 @@ interface Pass {
     var expireDate: LocalDateTime?
     var duration: Duration
     var price: Double
+    var insertDate: LocalDateTime?
+
     fun isExpired() : Boolean
     fun copyTo() : Pass
 }
@@ -56,8 +58,9 @@ data class DayPass(override var duration: Duration, override var price: Double =
                 }
             }
         }
-
     override var expireDate: LocalDateTime? = null
+    override var insertDate: LocalDateTime? = null
+
     override fun isExpired() : Boolean = isExpired(LocalDateTime.now())
     override fun copyTo(): Pass = copy()
     // To make DayPass testable
@@ -84,6 +87,8 @@ data class HourPass(override var duration: Duration, override var price: Double 
             }
         }
     override var expireDate: LocalDateTime? = null
+    override var insertDate: LocalDateTime? = null
+
     override fun isExpired() : Boolean = isExpired(LocalDateTime.now())
     override fun copyTo(): Pass = copy()
 
