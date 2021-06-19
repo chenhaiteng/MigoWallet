@@ -3,4 +3,6 @@
     <string name="buy_button">Buy</string>
     <string name="active_button">Activate</string>
     <string name="detail_button">Detail</string>
+    <string name="code_test_url">https://code-test.migoinc-dev.com/status</string>
+    <string name="code_test_url_private">http://192.168.2.2/status</string>
 </resources>
