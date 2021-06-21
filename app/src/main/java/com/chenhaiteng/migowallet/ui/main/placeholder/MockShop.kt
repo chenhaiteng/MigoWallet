@@ -1,13 +1,20 @@
 package com.chenhaiteng.migowallet.ui.main.placeholder
 import androidx.lifecycle.ViewModel
 import com.chenhaiteng.migowallet.ui.main.*
-import java.time.Duration
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
 // Mock Model for PassShop
-class MockShop : ViewModel() {
+
+@HiltViewModel
+class MockShop @Inject constructor(): ViewModel() {
     private var items = listOf<Pass>()
 
-    fun fetchAvailablePasses() {
+    init {
+        fetchAvailablePasses()
+    }
+
+    private fun fetchAvailablePasses() {
         items = listOf(
             DayPass(1, 2.0),
             DayPass(3, 5.0),

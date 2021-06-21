@@ -1,13 +1,15 @@
 package com.chenhaiteng.migowallet.ui.main.placeholder
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.chenhaiteng.migowallet.ui.main.Pass
 import com.chenhaiteng.migowallet.ui.main.PassType
+import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDateTime
+import javax.inject.Inject
 
-class MyPassMockModel : ViewModel() {
+@HiltViewModel
+class MyPassMockModel @Inject constructor() : ViewModel() {
 
     private val items = mutableListOf<Pass>()
     val livedata = MutableLiveData(items)

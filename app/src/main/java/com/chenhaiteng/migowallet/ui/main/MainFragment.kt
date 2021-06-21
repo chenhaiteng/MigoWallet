@@ -7,14 +7,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import com.chenhaiteng.migowallet.R
-import com.chenhaiteng.migowallet.ui.main.placeholder.MockShop
 import com.chenhaiteng.migowallet.ui.main.placeholder.MyPassMockModel
+import com.chenhaiteng.migowallet.utility.Async
 import com.chenhaiteng.migowallet.utility.NetworkInfo
 import com.chenhaiteng.migowallet.utility.doAsync
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.group_list_item.view.*
 import kotlinx.android.synthetic.main.main_fragment.view.*
 import okhttp3.OkHttpClient
@@ -24,11 +26,12 @@ import java.time.Duration
 import java.util.concurrent.TimeUnit
 import javax.net.SocketFactory
 
+@AndroidEntryPoint
 class MainFragment : Fragment(), LifecycleObserver {
     companion object {
         fun newInstance() = MainFragment()
     }
-    private val shop: MockShop by activityViewModels()
+
     private val myPass: MyPassMockModel by activityViewModels()
 
     private val shopFragment: ShopFragment by lazy { ShopFragment.newShop() }
@@ -89,7 +92,7 @@ class MainFragment : Fragment(), LifecycleObserver {
 
     private fun migoCodeTestFetchPrivate() {
         //Try connect to Private
-        doAsync {
+        Async.doJob {
             val url = URL(getString(R.string.code_test_url_private))
             val client = OkHttpClient.Builder()
                 .socketFactory(PrivateSocketFactory.wifi() ?: SocketFactory.getDefault())
@@ -120,7 +123,7 @@ class MainFragment : Fragment(), LifecycleObserver {
     }
 
     fun migoCodeTestFetchPublic() {
-        doAsync {
+        Async.doJob {
             val url = URL(getString(R.string.code_test_url))
             val client = OkHttpClient.Builder()
                 .build()
@@ -155,7 +158,6 @@ class MainFragment : Fragment(), LifecycleObserver {
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun onCreated(){
         activity?.lifecycle?.removeObserver(this)
-        shop.fetchAvailablePasses()
     }
 
     override fun onAttach(context: Context) {

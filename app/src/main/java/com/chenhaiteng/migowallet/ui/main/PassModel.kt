@@ -26,25 +26,6 @@ interface Pass {
     fun copyTo() : Pass
 }
 
-fun Pass.activate() {
-    activeDate ?: run {
-        synchronized(this@activate) {
-            activeDate ?: run {
-                activeDate = LocalDateTime.now()
-            }
-        }
-    }
-}
-
-fun Pass.isActivated() : Boolean {
-    return activeDate != null && !isExpired()
-}
-
-fun Pass.title(): String = when(type) {
-    PassType.Day -> "${duration.toDays()} Day Pass".toUpperCase()
-    PassType.Hour -> "${duration.toHours()} Hour Pass".toUpperCase()
-}
-
 data class DayPass(override var duration: Duration, override var price: Double = 0.0): Pass {
     constructor(num: Long, price: Double)  : this(Duration.ofDays(num), price)
 

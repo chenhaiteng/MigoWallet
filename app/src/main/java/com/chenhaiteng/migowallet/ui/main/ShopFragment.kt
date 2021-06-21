@@ -10,8 +10,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.chenhaiteng.migowallet.R
 import com.chenhaiteng.migowallet.ui.main.placeholder.MockShop
 import com.chenhaiteng.migowallet.ui.main.placeholder.MyPassMockModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.shop_fragment.view.*
 
+@AndroidEntryPoint
 class ShopFragment : Fragment() {
     private val shop: MockShop by activityViewModels()
     private val myPass: MyPassMockModel by activityViewModels()

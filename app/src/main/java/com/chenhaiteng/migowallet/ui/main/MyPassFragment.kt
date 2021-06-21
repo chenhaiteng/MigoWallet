@@ -2,7 +2,6 @@ package com.chenhaiteng.migowallet.ui.main
 
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,10 +11,32 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.chenhaiteng.migowallet.R
 import com.chenhaiteng.migowallet.ui.main.placeholder.MyPassMockModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.my_pass_fragment.view.*
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
+
+fun Pass.activate() {
+    activeDate ?: run {
+        synchronized(this@activate) {
+            activeDate ?: run {
+                activeDate = LocalDateTime.now()
+            }
+        }
+    }
+}
+
+fun Pass.isActivated() : Boolean {
+    return activeDate != null && !isExpired()
+}
+
+fun Pass.title(): String = when(type) {
+    PassType.Day -> "${duration.toDays()} Day Pass".toUpperCase()
+    PassType.Hour -> "${duration.toHours()} Hour Pass".toUpperCase()
+}
+
+@AndroidEntryPoint
 class MyPassFragment : Fragment() {
     private val myPass: MyPassMockModel by activityViewModels()
     inner class MyPassDatasource : GroupListDataSource {

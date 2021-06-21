@@ -1,6 +1,11 @@
 package com.chenhaiteng.migowallet.utility
 
 import android.os.AsyncTask
+import com.chenhaiteng.migowallet.ui.main.MainFragment
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
@@ -32,3 +37,13 @@ private val asyncScope = object : CoroutineScope {
 
 fun doAsync(block: (suspend CoroutineScope.() -> Unit)) = asyncScope.launch(block = block)
 
+@Module
+@InstallIn(SingletonComponent::class)
+object Async {
+    private val internalScope = object : CoroutineScope {
+        override val coroutineContext: CoroutineContext
+            get() = Dispatchers.Default
+    }
+    @Provides
+    fun doJob(block: (suspend CoroutineScope.() -> Unit)) = internalScope.launch(block = block)
+}
