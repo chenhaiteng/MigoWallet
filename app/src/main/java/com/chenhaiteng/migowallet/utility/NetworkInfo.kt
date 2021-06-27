@@ -4,8 +4,15 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.wifi.WifiManager
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Inject
 
-class NetworkInfo private constructor(context: Context) {
+@Module
+@InstallIn(SingletonComponent::class)
+class NetworkInfo @Inject constructor(@ApplicationContext context: Context) {
 
     private val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     private val capabilities
@@ -25,14 +32,4 @@ class NetworkInfo private constructor(context: Context) {
 
     val isCellular
         get() = capabilities?.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ?: false
-
-    companion object {
-        @Volatile private var standard: NetworkInfo? = null
-        fun standard(context: Context? = null) = createSingleton(standard, this) {
-            requireNotNull(context)
-            standard = NetworkInfo(context)
-
-            standard!!
-        }
-    }
 }
