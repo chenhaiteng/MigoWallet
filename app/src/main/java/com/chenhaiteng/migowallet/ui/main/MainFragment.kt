@@ -6,16 +6,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import com.chenhaiteng.migowallet.R
-import com.chenhaiteng.migowallet.ui.main.placeholder.MyPassMockModel
+import com.chenhaiteng.migowallet.ui.main.placeholder.LocalPassModel
+import com.chenhaiteng.migowallet.ui.main.placeholder.MockLocalPass
 import com.chenhaiteng.migowallet.utility.Async
 import com.chenhaiteng.migowallet.utility.NetworkInfo
-import com.chenhaiteng.migowallet.utility.doAsync
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.group_list_item.view.*
 import kotlinx.android.synthetic.main.main_fragment.view.*
@@ -24,15 +22,22 @@ import java.lang.Exception
 import java.net.URL
 import java.time.Duration
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 import javax.net.SocketFactory
 
 @AndroidEntryPoint
 class MainFragment : Fragment(), LifecycleObserver {
+    @Inject
+    lateinit var netInfo: NetworkInfo
+
+    @MockLocalPass
+    @Inject
+    lateinit var myPass: LocalPassModel
+
     companion object {
         fun newInstance() = MainFragment()
     }
 
-    private val myPass: MyPassMockModel by activityViewModels()
 
     private val shopFragment: ShopFragment by lazy { ShopFragment.newShop() }
     private val myPassFragment: MyPassFragment by lazy { MyPassFragment.newMyPasses() }
@@ -78,7 +83,6 @@ class MainFragment : Fragment(), LifecycleObserver {
     }
 
     private fun fetchMigoCodeTest() {
-        val netInfo = NetworkInfo.standard(context)
         if (netInfo.isConnected) {
             if (netInfo.isWifi && netInfo.isCellular) {
                 migoCodeTestFetchPrivate()
@@ -95,7 +99,7 @@ class MainFragment : Fragment(), LifecycleObserver {
         Async.doJob {
             val url = URL(getString(R.string.code_test_url_private))
             val client = OkHttpClient.Builder()
-                .socketFactory(PrivateSocketFactory.wifi() ?: SocketFactory.getDefault())
+                .socketFactory(PrivateSocketFactory.wifi(netInfo) ?: SocketFactory.getDefault())
                 .readTimeout(2, TimeUnit.SECONDS)
                 .build()
             val request = okhttp3.Request.Builder()

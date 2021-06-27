@@ -8,15 +8,16 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.chenhaiteng.migowallet.R
-import com.chenhaiteng.migowallet.ui.main.placeholder.MockShop
-import com.chenhaiteng.migowallet.ui.main.placeholder.MyPassMockModel
+import com.chenhaiteng.migowallet.ui.main.placeholder.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.shop_fragment.view.*
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ShopFragment : Fragment() {
+    @MockLocalPass @Inject lateinit var myPass: LocalPassModel
     private val shop: MockShop by activityViewModels()
-    private val myPass: MyPassMockModel by activityViewModels()
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {

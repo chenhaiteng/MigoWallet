@@ -6,15 +6,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.chenhaiteng.migowallet.R
-import com.chenhaiteng.migowallet.ui.main.placeholder.MyPassMockModel
+import com.chenhaiteng.migowallet.ui.main.placeholder.LocalPassModel
+import com.chenhaiteng.migowallet.ui.main.placeholder.MockLocalPass
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.my_pass_fragment.view.*
 import java.time.LocalDateTime
 import java.time.ZoneOffset
+import javax.inject.Inject
 
 
 fun Pass.activate() {
@@ -38,7 +39,7 @@ fun Pass.title(): String = when(type) {
 
 @AndroidEntryPoint
 class MyPassFragment : Fragment() {
-    private val myPass: MyPassMockModel by activityViewModels()
+    @MockLocalPass @Inject lateinit var myPass: LocalPassModel
     inner class MyPassDatasource : GroupListDataSource {
         override fun numberOfGroups(groupList: GroupListAdapter): Int {
             return 2
@@ -66,8 +67,8 @@ class MyPassFragment : Fragment() {
 
         fun getPassItem(pathIndex: Pair<Int, Int>) : GroupListItem {
             val item = when(pathIndex.first) {
-                0 -> myPass.allDayPass()[pathIndex.second]
-                1 -> myPass.allHourPass()[pathIndex.second]
+                0 -> myPass[PassType.Day, pathIndex.second]
+                1 -> myPass[PassType.Hour, pathIndex.second]
                 else -> null
             }
             return item?.let { pass ->
@@ -128,8 +129,8 @@ class MyPassFragment : Fragment() {
     private val adapter = GroupListAdapter(MyPassDatasource(), object: GroupListDelegate {
         override fun onClickItem(groupList: GroupListAdapter, at: Pair<Int, Int>?) {
             val item = when(at?.first) {
-                0 -> myPass.allDayPass()[at.second]
-                1 -> myPass.allHourPass()[at.second]
+                0 -> myPass[PassType.Day, at.second]
+                1 -> myPass[PassType.Hour, at.second]
                 else -> null
             }
             item?.let { pass ->
@@ -144,7 +145,7 @@ class MyPassFragment : Fragment() {
         root.my_pass_group_list.layoutManager = LinearLayoutManager(context)
         root.my_pass_group_list.adapter = adapter
 
-        myPass.livedata.observe(viewLifecycleOwner, Observer {
+        myPass.observe(viewLifecycleOwner, Observer {
             adapter.notifyDataSetChanged()
         })
         return root

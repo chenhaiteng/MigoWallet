@@ -9,7 +9,6 @@ import java.net.*
 import javax.net.SocketFactory
 
 class PrivateSocketFactory(private val localAddress:InetAddress) : SocketFactory() {
-
     private val system = getDefault()
 
     override fun createSocket(): Socket = system.createSocket().apply {
@@ -36,11 +35,11 @@ class PrivateSocketFactory(private val localAddress:InetAddress) : SocketFactory
 
     companion object {
 
-        fun wifi() : SocketFactory? {
+        fun wifi(netInfo: NetworkInfo) : SocketFactory? {
             for ( item in NetworkInterface.getNetworkInterfaces()) {
                 item.getIP()?.let {
                     val addrInt = it.address.toAddressInt()
-                    val wifiInt = NetworkInfo.standard().wifiIP
+                    val wifiInt = netInfo.wifiIP
                     val wifiReverse = wifiInt.reverseBytes()
                     if (addrInt == wifiInt || addrInt == wifiReverse) {
                         return PrivateSocketFactory(item.inetAddresses.nextElement())
