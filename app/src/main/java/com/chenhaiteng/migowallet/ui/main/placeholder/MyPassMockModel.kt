@@ -40,7 +40,7 @@ annotation class LocalPass
 class MyPassMockModel @Inject constructor() : LocalPassModel, ViewModel() {
 
     private val items = mutableListOf<Pass>()
-    val livedata = MutableLiveData(items)
+    private val livedata = MutableLiveData(items)
 
     override fun loadPasses() {
         // TODO: This is a mock implementation, try link to Room in future
